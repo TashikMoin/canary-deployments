@@ -30,6 +30,7 @@ spec:
         args:
           - git clone https://github.com/TashikMoin/canary-deployments.git /content/;
             cp -r /content/red/* /red/;
+            rm -rf /content;
         volumeMounts:
         - name: web-content-volume
           mountPath: "/red"
