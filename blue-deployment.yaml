@@ -3,9 +3,6 @@ kind: Deployment
 metadata:
   name: nginx-blue-deployment
 spec:
-  volumes:
-  - name: web-content-volume
-    emptyDir: {}
   replicas: 3
   selector:
     matchLabels:
@@ -15,6 +12,9 @@ spec:
       labels:
         name: nginx-pod-label
     spec:
+      volumes:
+      - name: web-content-volume
+        emptyDir: {}
       containers:
       - name: nginx
         image: nginx
@@ -23,15 +23,15 @@ spec:
         volumeMounts:
         - name: web-content-volume
           mountPath: "/usr/share/nginx/html"
-
       initContainers:
-      - name: web-content-pull
+      - name: init-web-content
         image: alpine/git
-        command:
-        - git
-        - clone
-        - https://github.com/TashikMoin/canary-deployments.git
-        - /web/
+        command: ["/bin/sh", "-c"]
+        args:
+          - git clone https://github.com/TashikMoin/canary-deployments.git /content/;
+            cp -r /content/blue/* /blue/;
         volumeMounts:
         - name: web-content-volume
-          mountPath: "/web/blue/"
+          mountPath: "/blue"
+
+
